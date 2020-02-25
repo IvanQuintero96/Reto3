@@ -69,7 +69,7 @@ fun createReciper() {
                 loadList(listCargada)
                 aceiteSelected.add(Aceites(name, cantidad))
                 aceiteSelected.forEach {
-                    println("Fruta: ${it.nombre} | Cantidad: ${it.cantidad}")
+                    println("Aceite: ${it.nombre} | Cantidad: ${it.cantidad}")
                 }
             }
             6-> {
@@ -77,7 +77,7 @@ fun createReciper() {
                 loadList(listCargada)
                 cerealSelected.add(Cereal(name, cantidad))
                 cerealSelected.forEach {
-                    println("Fruta: ${it.nombre} | Cantidad: ${it.cantidad}")
+                    println("Cereal: ${it.nombre} | Cantidad: ${it.cantidad}")
                 }
             }
     }}while(categorieSelected!=9)

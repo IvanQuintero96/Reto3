@@ -1,19 +1,17 @@
 package com.example.reto3kotlin
 
-import com.example.reto3kotlin.Model.Aceites
-import com.example.reto3kotlin.Model.Cereal
-import com.example.reto3kotlin.Model.Frutas
-val frutaSelected = mutableListOf<Frutas>()
-val aceiteSelected = mutableListOf<Aceites>()
-val cerealSelected = mutableListOf<Cereal>()
-var listCargada = mutableListOf<String>()
-val listCategories = mutableListOf("Agua","leche", "carne", "verduras", "frutas", "cereal", "huevos", "aceites")
-val listFrutas = mutableListOf("Fresa", "Platano", "Uvas", "Manzana", "Naranja", "Pera", "Cereza")
-val listCereal = mutableListOf("Avena", "Trigo", "Arroz", "Maiz")
-val listAceites = mutableListOf("De oliva", "De palma", "Vegetal")
+import com.example.reto3kotlin.Model.Product
+import com.example.reto3kotlin.Model.Receta
+
+
+val recetas = ArrayList<Receta>()
+val listCategories = hashMapOf(1 to "Agua",2 to "leche",3 to "carne",4 to "verduras",5 to "frutas",6 to "cereal",7 to "huevos",8 to "aceites")
+val listVerduras = hashMapOf(1 to "habichuela", 2 to "Zanahoria")
+val listFrutas = hashMapOf(1 to "Fresa", 2 to "Platano", 3 to "Uvas", 4 to "Manzana", 5 to "Naranja", 6 to "Pera", 7 to "Cereza")
+val listCereal = hashMapOf(1 to "Avena", 2 to "Trigo", 3 to "Arroz", 4 to "Maiz")
+val listAceites = hashMapOf(1 to "Aceite de oliva", 2 to "Aceite de palma", 3 to "Aceite vegetal")
 var name = ""
 var cantidad = 0
-
 fun main (args: Array<String>){
 viewMenu()
 }
@@ -29,7 +27,7 @@ fun viewMenu() {
         |2. Ver mis recetas
         |3. Salir
     """.trimMargin()
-    println(message)
+    println("\n$message")
     val response = readLine()?.toInt()
 
     when (response) {
@@ -42,65 +40,75 @@ fun viewMenu() {
 }
 
 fun createReciper() {
-
-
+    println("Ingrese el nombre de la receta")
+    val nombreReceta = readLine()
+    var productSelected = ArrayList<Product>()
     do {
-        var j=1
-        println("Hacer receta\n Selecciona por categoria el ingrediente que buscas")
-        for (i in listCategories) {
-            println("$j. $i")
-            j++
+
+        println("\nHacer receta: $nombreReceta\n Selecciona por categoria el ingrediente que buscas")
+        listCategories.forEach {
+            println("${it.key}. ${it.value}")
         }
         println("\n9. Volver al menu principal")
         val categorieSelected = readLine()?.toInt()
 
         when (categorieSelected) {
-            5 -> {
-                listCargada = listFrutas
-                loadList(listCargada)
-                frutaSelected.add(Frutas(name, cantidad))
-                frutaSelected.forEach {
-                    println("Fruta: ${it.nombre} | Cantidad: ${it.cantidad}")
-                }
-
-        }
-            8-> {
-                listCargada = listAceites
-                loadList(listCargada)
-                aceiteSelected.add(Aceites(name, cantidad))
-                aceiteSelected.forEach {
-                    println("Aceite: ${it.nombre} | Cantidad: ${it.cantidad}")
-                }
+            1-> {name="Agua"
+                cantidad=1
+                productSelected.add(Product(name, cantidad))
             }
-            6-> {
-                listCargada = listCereal
-                loadList(listCargada)
-                cerealSelected.add(Cereal(name, cantidad))
-                cerealSelected.forEach {
-                    println("Cereal: ${it.nombre} | Cantidad: ${it.cantidad}")
-                }
+            2-> {name="Leche"
+                cantidad=1
+                productSelected.add(Product(name, cantidad))
+            }
+            3-> {name="Carne"
+                cantidad = readLine()?.toInt() ?: 1
+                productSelected.add(Product(name, cantidad))
+            }
+            7-> {name="Huevo"
+                cantidad = readLine()?.toInt() ?: 1
+                if (cantidad>1) name="Huevos"
+                productSelected.add(Product(name, cantidad))
+            }
+            4 -> loadList(listVerduras, productSelected)
+            5 -> loadList(listFrutas, productSelected)
+            8-> loadList(listAceites, productSelected)
+            6-> loadList(listCereal, productSelected)
+            9-> {
+                recetas.add(Receta(nombreReceta!!, productSelected))
             }
     }}while(categorieSelected!=9)
 
 }
 
 
-fun loadList(listLoaded : List<String>){
-    var j= 1
-    for (i in listLoaded){
-        println("$j. $i")
-        j++
+fun loadList(listLoaded : HashMap<Int, String>, productSelect: ArrayList<Product> ){
+    listLoaded.forEach {
+        println("${it.key}. ${it.value}")
     }
     println("Seleccione una opcion")
     var optionSelected = readLine()?.toInt()
     if (optionSelected!!<=0)optionSelected=1
     else if (optionSelected>=listLoaded.size)optionSelected=listLoaded.size
-    name = listLoaded[optionSelected-1]
+    name = listLoaded[optionSelected]!!
     println(" Ingrese la cantidad que desea")
     cantidad = readLine()?.toInt() ?: 1
     if (cantidad<=0)cantidad =1
+    productSelect.add(Product(name, cantidad))
+    productSelect.forEach {
+        println("Nombre: ${it.nombre} | Cantidad: ${it.cantidad}")
+    }
 }
 
 fun viewRecipe(){
-    println("ver recetas")
+
+    recetas.forEach {
+        var j=1
+        println("\nReceta: ${it.nombreReceta} ")
+        it.listProducts.forEach {
+            println("$j. ${it.cantidad} ${it.nombre}" )
+            j++
+        }
+    }
+
 }
